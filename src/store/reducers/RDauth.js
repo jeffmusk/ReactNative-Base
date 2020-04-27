@@ -1,4 +1,7 @@
 import {
+  SIGNUP_REQUEST,
+  SIGNUP_SUCCESS,
+  SIGNUP_ERROR,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
@@ -12,6 +15,9 @@ import {
 
 export default (
   state = {
+    checkIn: false ,
+    successfulRegistration: false,
+    errorRegistration: false,
     isLoggingIn: false,
     isLoggingOut: false,
     isVerifying: false,
@@ -24,13 +30,32 @@ export default (
   action
 ) => {
   switch (action.type) {
+    case SIGNUP_REQUEST:
+      return {
+        ...state,
+        checkIn: true
+      };
+    case SIGNUP_SUCCESS:
+      return {
+        ...state,
+        successfulRegistration: true,
+        message: action.payload,
+        checkIn: false
+      };
+    case SIGNUP_ERROR:
+      return {
+        ...state,
+        errorRegistration: true,
+        message: action.payload ,
+        checkIn: false
+      };
+
     case LOGIN_REQUEST:
       return {
         ...state,
         isLoggingIn: true,
         loginError: false
       };
-    
     case LOGIN_SUCCESS:
       return {
         ...state,
