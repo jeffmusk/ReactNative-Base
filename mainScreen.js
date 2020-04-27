@@ -30,7 +30,6 @@ function MainScreen(props) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {console.log(props)}
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={Login} />
       </Stack.Navigator>
