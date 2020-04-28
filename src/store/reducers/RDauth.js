@@ -16,8 +16,11 @@ import {
 export default (
   state = {
     checkIn: false ,
+    emailVerified: false,
     successfulRegistration: false,
     errorRegistration: false,
+    message: '',
+    errorMessage: '',
     isLoggingIn: false,
     isLoggingOut: false,
     isVerifying: false,
@@ -47,7 +50,8 @@ export default (
         ...state,
         errorRegistration: true,
         message: action.payload ,
-        checkIn: false
+        errorMessage: action.errorMessage,
+        checkIn: false,
       };
 
     case LOGIN_REQUEST:

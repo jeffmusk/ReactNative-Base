@@ -3,19 +3,14 @@ import { connect } from "react-redux";
 import { View, Text , Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import SignUp from './src/screens/SignUp';
+import SignIn from './src/screens/SignUp';
+import Login  from './src/screens/Login';
+import Home  from './src/screens/HomeScreen';
+import {logoutUser} from './src/store/actions';
 
 
 
-function HomeScreen(props) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Hola Jeff</Text>
-    </View>
-  );
-}
-
-function Login({navigation}) {
+/* function Login({navigation}) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Login </Text>
@@ -26,17 +21,19 @@ function Login({navigation}) {
     </View>
   );
 }
-
+ */
 const Stack = createStackNavigator();
 
 function MainScreen(props) {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SignUp">
-        {console.log(props)}
-        <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Home" huy={props} component={Home} />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={SignUp} />
+
+        <Stack.Screen  name="SignUp" component={SignIn} options={{
+          title: 'Registro'
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -47,6 +44,7 @@ function mapStateToProps(state) {
     state: state
   };
 }
+
 
 export default connect(mapStateToProps)(MainScreen) ;
 

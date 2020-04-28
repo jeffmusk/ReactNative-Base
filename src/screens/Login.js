@@ -4,7 +4,7 @@ import { View, Text , StyleSheet , TouchableOpacity} from 'react-native';
 
 import {  Input , Icon, Button,Image } from 'react-native-elements';
 
-import {signup , clearErrorMessage} from '../store/actions'
+import { clearErrorMessage , loginUser} from '../store/actions'
 import logo from '../../assets/minilogo.png'
 console.ignoredYellowBox = ['Setting a timer'];
 
@@ -72,55 +72,48 @@ const styles = StyleSheet.create({
   }
 })
 
-const SignIn = (props) => {
+const Login = (props) => {
   
+  const {dispatch} = props
   const _textInput  = React.createRef();
   const _pass1  = React.createRef();
-  const _pass2  = React.createRef();
 
   const [emailMessage, setEmailMessage] = useState('');
   const [passMessage, setPassMessage] = useState('');
   const [email, setEmail] = useState('');
   const [pass1, setPass1] = useState('');
-  const [pass2, setPass2] = useState('');
-  const [emailValid , setEmailValit] = useState('');
 
-  const {dispatch} = props
 
-  
-
-  const signInWithEmail = () => {
+  const loginWithEmail = () => {
     setPassMessage('')
+    setEmailMessage('')
     if(validateEmail() ){
-      setEmailMessage('')
-      if(pass1 !== '' && pass2 !== '' && pass1 === pass2 && pass1.length > 5){
-        setPassMessage('');
-          /* creacion de cuenta*/
-        dispatch(clearErrorMessage(''))
-        dispatch(signup(email ,pass1));
+      if(pass1.length > 5) {
+        dispatch(loginUser(email , pass1))
       }else{
-        _pass1.current.shake();
-        _pass2.current.shake();
-        if(pass1.length > 5 ){
-          /* creacion de cuenta*/
-          pass1 !== pass2 ? setPassMessage('Las contraseñas no coinciden') : 
-            setPassMessage('El campo de contraseña no puede estar vacio') ;
-        }else{
-          setPassMessage('La contraseña debe contener minimo 6 caracteres')
-        }
+        setPassMessage('La contraseña contiene minimo 6 caracteres')
+        _pass1.current.shake(); 
       }
     }else{
-      setEmailMessage('El email tiene un formato incorrecto')
+      setEmailMessage('Formato de email incorrecto')
       _textInput.current.shake(); 
     }
   }
 
   const validateEmail = () => {
+    /* _textInput.current.shake();  */
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const emailValid = re.test(email);
     console.log(emailValid);
+    /*  LayoutAnimation.easeInEaseOut(); 
+    setEmailValit(emailValid);
+    emailValid || this.emailInput.shake(); */
     return emailValid; 
   }
+/* 
+  const validate = () => {
+    console.log('Validando email');
+  } */
 
   return (
     <View style={styles.container}  >
@@ -130,6 +123,7 @@ const SignIn = (props) => {
           source={logo}
         />
         
+
         <Input style={styles.input} placeholder='Email' 
         ref={_textInput}
         onChangeText={inputEmail => setEmail(inputEmail) }
@@ -140,10 +134,11 @@ const SignIn = (props) => {
         leftIcon={
           <Icon name={'envelope'} type={'simple-line-icon'} color="#FD8712" size={18} />
         }
+        
         />
 
         <Input style={styles.input} placeholder='Contraseña' 
-        secureTextEntry={true}
+        /* secureTextEntry={true} */
         ref={_pass1}
         inputStyle={styles.inputStyle}
         inputContainerStyle={styles.inputContainer}
@@ -151,27 +146,14 @@ const SignIn = (props) => {
         leftIcon={
           <Icon name={'lock'} type={'simple-line-icon'} color="#FD8712" size={18} />
         }
-
+        errorMessage={ passMessage === '' ? null : passMessage }
         />
   
-        <Input style={styles.input} placeholder='Confirmar Contraseña' 
-        ref={_pass2}
-        autoCapitalize="none"
-        keyboardAppearance="dark"
-        secureTextEntry={true}
-        onChangeText={pass2 => setPass2(pass2) }
-        inputStyle={styles.inputStyle}
-        inputContainerStyle={styles.inputContainer}
-        errorMessage={ passMessage === '' ? null : passMessage }
-        leftIcon={
-          <Icon name={'lock'} type={'simple-line-icon'} color="#FD8712" size={18} />
-        }
-        />
         <Button
             loading={props.checkIn}
-            title="Registrarse"
+            title="Iniciar sesion"
             buttonStyle={styles.button}
-            onPress={(e)=> {signInWithEmail(e)}} 
+            onPress={()=> {loginWithEmail()}} 
           />
 
         {/* Mensaje de exito */}
@@ -188,13 +170,12 @@ const SignIn = (props) => {
         
         
         <TouchableOpacity style={styles.footer}  
-        onPress={() => props.navigation.navigate('Login')} >
+        onPress={() => props.navigation.navigate('SignUp')} >
           
           <Text  style={styles.footerText}>
-            Ya tengo cuenta
+            Registrarme
           </Text>          
         </TouchableOpacity>
-
       </View>
    
   );
@@ -206,10 +187,8 @@ function mapStateToProps(state) {
     checkIn: state.auth.checkIn,
     message: state.auth.message,
     errorMessage: state.auth.errorMessage,
-    errorRegistration: state.auth.errorRegistration,
-    successfulRegistration : state.auth.successfulRegistration
   };
 }
 
-export default connect(mapStateToProps)(SignIn) ;
+export default connect(mapStateToProps)(Login) ;
 

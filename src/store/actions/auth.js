@@ -4,6 +4,7 @@ import { myFirebase, firebaseInit } from "../../../configFirebase";
 export const SIGNUP_REQUEST = "SIGNUP_REQUEST";
 export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
 export const SIGNUP_ERROR = "SIGNUP_ERROR";
+export const EMAIL_VERIFIED = "EMAIL_VERIFIED";
 
 // LOGIN
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -71,11 +72,23 @@ const verifySuccess = () => {
   };
 };
 
-// Signing up with Firebase
-export const signup = (email, password) => async dispatch => {
-  dispatch({
+const signUpRequest = () => {
+  return {
     type: SIGNUP_REQUEST,
-  })
+  }
+}
+
+const errorMessage = () => {
+  return{
+    type: SIGNUP_ERROR,
+    payload: "",
+    errorMessage: ''
+  }
+}
+
+// Signing up with Firebase
+export const signup = (email, password) => async  dispatch => {
+  dispatch(signUpRequest()) 
   try {
     myFirebase.auth().createUserWithEmailAndPassword(email,password)
     .then(dataBeforeEmail => {
@@ -84,29 +97,30 @@ export const signup = (email, password) => async dispatch => {
       })
     })
     .then(dataBeforeEmail => {
+      console.log(dataBeforeEmail);
       myFirebase.auth().onAuthStateChanged(user => {
-        if(user.emailVerified){
-          //Email is verified
+        console.log(user);
+        if(!user.emailVerified){
+          //email is not verified
+          console.log('sin respuesta');
           dispatch({
             type: SIGNUP_SUCCESS,
-              payload:
-                "Su cuenta fue creada exitosamente! Ahora necesita verificar su dirección de correo electrónico, vaya a revisar su bandeja de entrada"
-          })
-        }else{
-          //email is not verified
-          dispatch({
-            type: SIGNUP_ERROR,
-            payload: "Algo salió mal, No pudimos crear tu cuenta"
+            payload: "Su cuenta fue creada exitosamente! Ahora necesita verificar su dirección de correo electrónico, vaya a revisar su bandeja de entrada"
           })
         }
       })
     }).catch((err) =>{
+      console.log('primer catch');
+      console.log(err);
       dispatch({
         type: SIGNUP_ERROR,
-        payload: "Algo salío mal, No pudimo crear tu cuenta ,Por favor intentalo nuevamente"
+        payload: "Algo salío mal",
+        errorMessage: err.message
       })
     } )
   } catch (err) {
+    console.log('segundo catch');
+    console.log(err);
     dispatch({
       type: SIGNUP_ERROR,
       payload: {
@@ -114,16 +128,21 @@ export const signup = (email, password) => async dispatch => {
         payload: "Algo salío mal, No pudimo crear tu cuenta ,Por favor intentalo nuevamente"
       }
     })
-  }
+  } 
 };
 
+export const clearErrorMessage = () => dispatch => {
+  dispatch(errorMessage())
+}
 
 export const loginUser = (email, password) => dispatch => {
+  console.log(" Enviando Email y password")
   dispatch(requestLogin());
   myFirebase
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then(res => {
+      console.log(" Hay respuesta")
       console.log(res.user.email);
       dispatch(receiveLogin(res.user));
     })
@@ -137,6 +156,7 @@ export const loginUser = (email, password) => dispatch => {
 
 
 export const logoutUser = () => dispatch => {
+  console.log("cerrando sesion");
   dispatch(requestLogout());
   myFirebase
     .auth()
@@ -154,7 +174,13 @@ export const verifyAuth = () => dispatch => {
   dispatch(verifyRequest());
   myFirebase.auth().onAuthStateChanged(user => {
     if (user !== null) {
-      dispatch(receiveLogin(user));
+      if(user.emailVerified){
+        console.log("cuenta verificada")
+        dispatch(receiveLogin(user));
+      }else{
+        console.log("cuenta no verificada")
+        console.log(user)
+      }
     }
     dispatch(verifySuccess());
   });
