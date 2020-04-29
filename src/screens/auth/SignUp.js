@@ -4,8 +4,8 @@ import { View, Text , StyleSheet , TouchableOpacity} from 'react-native';
 
 import {  Input , Icon, Button,Image } from 'react-native-elements';
 
-import {signup , clearErrorMessage} from '../store/actions'
-import logo from '../../assets/minilogo.png'
+import {signup , clearErrorMessage} from '../../store/actions'
+import logo from '../../../assets/minilogo.png'
 console.ignoredYellowBox = ['Setting a timer'];
 
 const styles = StyleSheet.create({

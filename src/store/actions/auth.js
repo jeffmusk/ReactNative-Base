@@ -1,5 +1,6 @@
 import { myFirebase, firebaseInit } from "../../../configFirebase";
 
+export const IS_LOADING = "IS_LOADING";
 // SIGN UP
 export const SIGNUP_REQUEST = "SIGNUP_REQUEST";
 export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
@@ -20,7 +21,12 @@ export const LOGOUT_FAILURE = "LOGOUT_FAILURE";
 export const VERIFY_REQUEST = "VERIFY_REQUEST";
 export const VERIFY_SUCCESS = "VERIFY_SUCCESS";
 
-
+const isLoading = (boolean) => {
+  return {
+    type: IS_LOADING,
+    payload: boolean
+  }
+}
 
 const requestLogin = () => {
   return {
@@ -86,12 +92,14 @@ const errorMessage = () => {
   }
 }
 
+
 // Signing up with Firebase
 export const signup = (email, password) => async  dispatch => {
   dispatch(signUpRequest()) 
   try {
     myFirebase.auth().createUserWithEmailAndPassword(email,password)
     .then(dataBeforeEmail => {
+      console.log(dataBeforeEmail);
       myFirebase.auth().onAuthStateChanged(user => {
         user.sendEmailVerification();
       })
@@ -175,13 +183,16 @@ export const verifyAuth = () => dispatch => {
   myFirebase.auth().onAuthStateChanged(user => {
     if (user !== null) {
       if(user.emailVerified){
+        dispatch(isLoading(false));
         console.log("cuenta verificada")
         dispatch(receiveLogin(user));
       }else{
+        dispatch(isLoading(false));
         console.log("cuenta no verificada")
         console.log(user)
       }
     }
+    dispatch(isLoading(false));
     dispatch(verifySuccess());
   });
 };

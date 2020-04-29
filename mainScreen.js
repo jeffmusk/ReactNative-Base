@@ -3,8 +3,10 @@ import { connect } from "react-redux";
 import { View, Text , Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import SignIn from './src/screens/SignUp';
-import Login  from './src/screens/Login';
+import Loading from './src/screens/GeneralScreen/Loading';
+import SignIn from './src/screens/auth/SignUp';
+import Login  from './src/screens/auth/Login';
+
 import Home  from './src/screens/HomeScreen';
 import {logoutUser} from './src/store/actions';
 
@@ -27,21 +29,34 @@ const Stack = createStackNavigator();
 function MainScreen(props) {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Home" huy={props} component={Home} />
-        <Stack.Screen name="Login" component={Login} />
-
-        <Stack.Screen  name="SignUp" component={SignIn} options={{
-          title: 'Registro'
-        }} />
+      {props.isLoading ? 
+      <Stack.Navigator headerMode="none">
+        <Stack.Screen name="Loading" component={Loading} />
       </Stack.Navigator>
+      :
+      !props.isAuthenticated ? 
+        <Stack.Navigator initialRouteName={"Login"} headerMode="none">
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen  name="SignUp" component={SignIn} options={{
+            title: 'Registro'
+          }} />
+        </Stack.Navigator>
+        :
+        <Stack.Navigator initialRouteName={"Home"}>
+          <Stack.Screen name="Home" component={Home} />
+        </Stack.Navigator>   
+    }
+      
+      
     </NavigationContainer>
   );
 }
 
 function mapStateToProps(state) {
   return {
-    state: state
+    state: state,
+    isAuthenticated: state.auth.isAuthenticated,
+    isLoading: state.auth.isLoading
   };
 }
 

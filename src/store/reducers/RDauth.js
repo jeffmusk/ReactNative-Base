@@ -1,4 +1,5 @@
 import {
+  IS_LOADING,
   SIGNUP_REQUEST,
   SIGNUP_SUCCESS,
   SIGNUP_ERROR,
@@ -16,6 +17,7 @@ import {
 export default (
   state = {
     checkIn: false ,
+    isLoading: true,
     emailVerified: false,
     successfulRegistration: false,
     errorRegistration: false,
@@ -33,6 +35,11 @@ export default (
   action
 ) => {
   switch (action.type) {
+    case IS_LOADING:
+      return{
+        ...state,
+        isLoading: action.payload
+      }
     case SIGNUP_REQUEST:
       return {
         ...state,

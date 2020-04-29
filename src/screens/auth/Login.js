@@ -1,12 +1,16 @@
 import React,{ useEffect, useState } from 'react';
 import { connect } from "react-redux";
-import { View, Text , StyleSheet , TouchableOpacity} from 'react-native';
+import { View, Text , StyleSheet , TouchableOpacity,Dimensions} from 'react-native';
 
 import {  Input , Icon, Button,Image } from 'react-native-elements';
 
-import { clearErrorMessage , loginUser} from '../store/actions'
-import logo from '../../assets/minilogo.png'
+import { clearErrorMessage , loginUser} from '../../store/actions'
+import logo from '../../../assets/minilogo.png'
+
+
 console.ignoredYellowBox = ['Setting a timer'];
+
+const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container:{
@@ -64,8 +68,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   footer:{
+    width: window.width -  25 ,
     position: 'absolute',
     bottom: 15,
+  },
+  footerElement:{
+    flex:1 ,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   footerText:{
     color: 'grey',
@@ -101,19 +111,10 @@ const Login = (props) => {
   }
 
   const validateEmail = () => {
-    /* _textInput.current.shake();  */
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const emailValid = re.test(email);
-    console.log(emailValid);
-    /*  LayoutAnimation.easeInEaseOut(); 
-    setEmailValit(emailValid);
-    emailValid || this.emailInput.shake(); */
     return emailValid; 
   }
-/* 
-  const validate = () => {
-    console.log('Validando email');
-  } */
 
   return (
     <View style={styles.container}  >
@@ -129,7 +130,6 @@ const Login = (props) => {
         onChangeText={inputEmail => setEmail(inputEmail) }
         inputStyle={styles.inputStyle}
         inputContainerStyle={styles.inputContainer}
-        onChange={() => {validateEmail()}}
         errorMessage={ emailMessage === '' ? null : emailMessage }
         leftIcon={
           <Icon name={'envelope'} type={'simple-line-icon'} color="#FD8712" size={18} />
@@ -166,16 +166,23 @@ const Login = (props) => {
           props.errorRegistration ? <Text style={styles.errorMessage}> {props.errorMessage}  </Text>  
           : <Text/>
         }
- 
-        
-        
-        <TouchableOpacity style={styles.footer}  
-        onPress={() => props.navigation.navigate('SignUp')} >
-          
-          <Text  style={styles.footerText}>
-            Registrarme
-          </Text>          
-        </TouchableOpacity>
+
+        <View style={styles.footer} >
+          <View style={styles.footerElement}>
+          <TouchableOpacity  onPress={() => props.navigation.navigate('SignUp')} >
+              <Text  style={styles.footerText}>
+              Olvide mi contraseña 
+              </Text>          
+            </TouchableOpacity>
+            <TouchableOpacity  onPress={() => props.navigation.navigate('SignUp')} >
+              <Text  style={styles.footerText}>
+                Registrarme
+              </Text>          
+            </TouchableOpacity>
+
+          </View>
+        </View>
+       
       </View>
    
   );
@@ -187,6 +194,7 @@ function mapStateToProps(state) {
     checkIn: state.auth.checkIn,
     message: state.auth.message,
     errorMessage: state.auth.errorMessage,
+    isLoading: state.auth.isLoading
   };
 }
 
