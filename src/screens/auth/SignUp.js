@@ -54,7 +54,7 @@ const SignIn = (props) => {
   const validateEmail = () => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const emailValid = re.test(email);
-    console.log(emailValid);
+    emailValid ? setEmailMessage('') : false;
     return emailValid; 
   }
 
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   message:{
     marginTop: 20,
     padding: 20 ,
-    color: 'green',
+    color: '#FD8712',
     textAlign:'justify'
   },
   errorMessage: {

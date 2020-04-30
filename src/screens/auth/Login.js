@@ -3,10 +3,8 @@ import { connect } from "react-redux";
 import { View, Text , StyleSheet , TouchableOpacity,Dimensions,ScrollView} from 'react-native';
 
 import {  Input , Icon, Button,Image } from 'react-native-elements';
-
-import { clearErrorMessage , loginUser} from '../../store/actions'
+import {  loginUser} from '../../store/actions'
 import logo from '../../../assets/minilogo.png'
-
 console.ignoredYellowBox = ['Setting a timer'];
 
 const window = Dimensions.get('window');
@@ -18,11 +16,11 @@ const Login = (props) => {
   const {dispatch} = props
   const _textInput  = React.createRef();
   const _pass1  = React.createRef();
-
-  const [emailMessage, setEmailMessage] = useState('');
-  const [passMessage, setPassMessage] = useState('');
+  
   const [email, setEmail] = useState('');
   const [pass1, setPass1] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [passMessage, setPassMessage] = useState('');
 
 
   const loginWithEmail = () => {
@@ -44,6 +42,7 @@ const Login = (props) => {
   const validateEmail = () => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const emailValid = re.test(email);
+    emailValid ? setEmailMessage('') : false ;
     return emailValid; 
   }
 
@@ -60,6 +59,7 @@ const Login = (props) => {
         <Input style={styles.input} placeholder='Email' 
         ref={_textInput}
         onChangeText={inputEmail => setEmail(inputEmail) }
+        onChange={() => {validateEmail()}}
         inputStyle={styles.inputStyle}
         inputContainerStyle={styles.inputContainer}
         errorMessage={ emailMessage === '' ? null : emailMessage }
@@ -68,18 +68,20 @@ const Login = (props) => {
         }
         
         />
-
-        <Input style={styles.input} placeholder='Contraseña' 
-        /* secureTextEntry={true} */
-        ref={_pass1}
-        inputStyle={styles.inputStyle}
-        inputContainerStyle={styles.inputContainer}
-        onChangeText={pass1 => setPass1(pass1) }
-        leftIcon={
-          <Icon name={'lock'} type={'simple-line-icon'} color="#FD8712" size={18} />
-        }
-        errorMessage={ passMessage === '' ? null : passMessage }
-        />
+        <View style={{width: SCREEN_WIDTH}} accessibilityRole='form'>
+          <Input style={styles.input} placeholder='Contraseña' 
+          /* secureTextEntry={true} */
+          ref={_pass1}
+          secureTextEntry={true}
+          inputStyle={styles.inputStyle}
+          inputContainerStyle={styles.inputContainer}
+          onChangeText={pass1 => setPass1(pass1) }
+          leftIcon={
+            <Icon name={'lock'} type={'simple-line-icon'} color="#FD8712" size={18} />
+          }
+          errorMessage={ passMessage === '' ? null : passMessage }
+          />
+        </View>
   
         <Button
             loading={props.isLoggingIn}
@@ -90,7 +92,7 @@ const Login = (props) => {
 
         {/* Mensaje de exito */}
         {
-          props.successfulRegistration ? <Text style={styles.message}> {props.message}  </Text>  
+          props.emailVerifiedMessage !== '' ? <Text style={styles.message}> {props.emailVerifiedMessage}  </Text>  
           : <Text/>
         }
         {/* Mensaje de error */}
@@ -123,10 +125,10 @@ const Login = (props) => {
 
 function mapStateToProps(state) {
   return {
-    checkIn: state.auth.checkIn,
     message: state.auth.message,
     errorMessage: state.auth.errorMessage,
     isLoggingIn: state.auth.isLoggingIn,
+    emailVerifiedMessage: state.auth.emailVerifiedMessage
 
   };
 }

@@ -4,6 +4,7 @@ import {
   SIGNUP_REQUEST,
   SIGNUP_SUCCESS,
   SIGNUP_ERROR,
+  EMAIL_VERIFIED,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
@@ -23,6 +24,7 @@ export default (
     successfulRegistration: false,
     errorRegistration: false,
     resetPasswordMessage: '' ,
+    emailVerifiedMessage: '',
     message: '',
     errorMessage: '',
     isLoggingIn: false,
@@ -67,7 +69,11 @@ export default (
         errorMessage: action.errorMessage,
         checkIn: false,
       };
-
+    case EMAIL_VERIFIED:
+      return {
+        ...state,
+        emailVerifiedMessage: action.emailVerifiedMessage
+      };  
     case LOGIN_REQUEST:
       return {
         ...state,

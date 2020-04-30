@@ -108,7 +108,6 @@ export const signup = (email, password) => async  dispatch => {
     .then(dataBeforeEmail => {
       console.log(dataBeforeEmail);
       myFirebase.auth().onAuthStateChanged(user => {
-        console.log(user);
         if(!user.emailVerified){
           //email is not verified
           console.log('sin respuesta');
@@ -151,9 +150,8 @@ export const loginUser = (email, password) => dispatch => {
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then(res => {
-      console.log(" Hay respuesta")
       console.log(res.user.email);
-      dispatch(receiveLogin(res.user));
+      user.emailVerified ? dispatch(receiveLogin(res.user)) : false ;
     })
     .catch(error => {
       //Do something with the error if you want!
@@ -207,10 +205,17 @@ export const verifyAuth = () => dispatch => {
     if (user !== null) {
       if(user.emailVerified){
         dispatch(isLoading(false));
-        console.log("cuenta verificada")
         dispatch(receiveLogin(user));
+        dispatch({
+          type: EMAIL_VERIFIED,
+          emailVerifiedMessage: ''
+        })
       }else{
         dispatch(isLoading(false));
+        dispatch({
+          type: EMAIL_VERIFIED,
+          emailVerifiedMessage: 'Por favor verifique su email'
+        })
         console.log("cuenta no verificada")
         console.log(user)
       }
