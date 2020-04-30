@@ -34,7 +34,7 @@ export default (
     logoutError: false,
     isAuthenticated: false,
     user: {},
-    error: {}
+    error: ''
   },
   action
 ) => {

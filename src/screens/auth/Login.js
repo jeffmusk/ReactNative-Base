@@ -19,6 +19,7 @@ const Login = (props) => {
   
   const [email, setEmail] = useState('');
   const [pass1, setPass1] = useState('');
+  
   const [emailMessage, setEmailMessage] = useState('');
   const [passMessage, setPassMessage] = useState('');
 
@@ -68,7 +69,7 @@ const Login = (props) => {
         }
         
         />
-        <View style={{width: SCREEN_WIDTH}} accessibilityRole='form'>
+        <View style={{width: SCREEN_WIDTH}} >
           <Input style={styles.input} placeholder='Contraseña' 
           /* secureTextEntry={true} */
           ref={_pass1}
@@ -97,9 +98,10 @@ const Login = (props) => {
         }
         {/* Mensaje de error */}
         {
-          props.errorRegistration ? <Text style={styles.errorMessage}> {props.errorMessage}  </Text>  
+          props.error !== '' ? <Text style={styles.errorMessage}> {props.error.message}  </Text>  
           : <Text/>
         }
+
 
         <View style={styles.footer} >
           <View style={styles.footerElement}>
@@ -128,8 +130,8 @@ function mapStateToProps(state) {
     message: state.auth.message,
     errorMessage: state.auth.errorMessage,
     isLoggingIn: state.auth.isLoggingIn,
-    emailVerifiedMessage: state.auth.emailVerifiedMessage
-
+    emailVerifiedMessage: state.auth.emailVerifiedMessage,
+    error: state.auth.error
   };
 }
 
@@ -195,6 +197,7 @@ const styles = StyleSheet.create({
     width: window.width -  25 ,
     position: 'absolute',
     bottom: 15,
+
   },
   footerElement:{
     flex:1 ,

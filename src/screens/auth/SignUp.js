@@ -116,6 +116,7 @@ const SignIn = (props) => {
           props.successfulRegistration ? <Text style={styles.message}> {props.message}  </Text>  
           : <Text/>
         }
+        
         {/* Mensaje de error */}
         {
           props.errorRegistration ? <Text style={styles.errorMessage}> {props.errorMessage}  </Text>  

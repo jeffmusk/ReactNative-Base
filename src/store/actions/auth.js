@@ -102,9 +102,10 @@ export const signup = (email, password) => async  dispatch => {
     .then(dataBeforeEmail => {
       console.log(dataBeforeEmail);
       myFirebase.auth().onAuthStateChanged(user => {
-        user.sendEmailVerification();
+        user !== null ? user.sendEmailVerification() : false;
       })
     })
+
     .then(dataBeforeEmail => {
       console.log(dataBeforeEmail);
       myFirebase.auth().onAuthStateChanged(user => {
@@ -144,19 +145,33 @@ export const clearErrorMessage = () => dispatch => {
 }
 
 export const loginUser = (email, password) => dispatch => {
-  console.log(" Enviando Email y password")
+  dispatch({
+    type: EMAIL_VERIFIED,
+    emailVerifiedMessage: ''
+  })
   dispatch(requestLogin());
   myFirebase
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then(res => {
       console.log(res.user.email);
-      user.emailVerified ? dispatch(receiveLogin(res.user)) : false ;
+      res.user.emailVerified ? dispatch(receiveLogin(res.user)) : dispatch(loginError({message: 'Aun no has verificado tu email'})) ;
     })
     .catch(error => {
       //Do something with the error if you want!
       console.log(error);
-      dispatch(loginError());
+      switch(error.code){
+        case 'auth/user-not-found':
+          error.message = 'Email no encontrado, o eliminado';
+            break
+          case 'auth/wrong-password':
+            error.message = 'Contraseña incorrecta';
+            break
+          default:
+            console.log(error);
+            break
+      }
+      dispatch(loginError(error));
     });
 };
 
@@ -214,10 +229,10 @@ export const verifyAuth = () => dispatch => {
         dispatch(isLoading(false));
         dispatch({
           type: EMAIL_VERIFIED,
-          emailVerifiedMessage: 'Por favor verifique su email'
+          emailVerifiedMessage: `enviamos un link de verificacion a ${user.email}, Luego de verificaion intenta ingresar `
         })
         console.log("cuenta no verificada")
-        console.log(user)
+
       }
     }
     dispatch(isLoading(false));
