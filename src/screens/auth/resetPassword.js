@@ -1,40 +1,30 @@
 import React,{ useEffect, useState } from 'react';
 import { connect } from "react-redux";
-import { View, Text , StyleSheet , TouchableOpacity,Dimensions,ScrollView} from 'react-native';
+import { View, Text , StyleSheet , TouchableOpacity,Dimensions} from 'react-native';
 
 import {  Input , Icon, Button,Image } from 'react-native-elements';
-
-import { clearErrorMessage , loginUser} from '../../store/actions'
+import { clearErrorMessage ,  firebaseResetPassword} from '../../store/actions'
 import logo from '../../../assets/minilogo.png'
+
 
 console.ignoredYellowBox = ['Setting a timer'];
 
 const window = Dimensions.get('window');
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-const Login = (props) => {
+const resetPassword = (props) => {
   
   const {dispatch} = props
   const _textInput  = React.createRef();
-  const _pass1  = React.createRef();
-
   const [emailMessage, setEmailMessage] = useState('');
-  const [passMessage, setPassMessage] = useState('');
   const [email, setEmail] = useState('');
-  const [pass1, setPass1] = useState('');
 
+  const sendResetPassword = () => {
 
-  const loginWithEmail = () => {
-    setPassMessage('')
     setEmailMessage('')
     if(validateEmail() ){
-      if(pass1.length > 5) {
-        dispatch(loginUser(email , pass1))
-      }else{
-        setPassMessage('La contraseña contiene minimo 6 caracteres')
-        _pass1.current.shake(); 
-      }
+      /* envio de email parar restaurar contraseña */
+      dispatch(firebaseResetPassword(email)) 
+      console.log("email enviado");
     }else{
       setEmailMessage('Formato de email incorrecto')
       _textInput.current.shake(); 
@@ -48,8 +38,7 @@ const Login = (props) => {
   }
 
   return (
-    <ScrollView  keyboardShouldPersistTaps="handled"
-    contentContainerStyle={styles.container} >
+    <View style={styles.container}  >
 
         <Image
           style={styles.logo}
@@ -57,53 +46,38 @@ const Login = (props) => {
         />
         
 
-        <Input style={styles.input} placeholder='Email' 
-        ref={_textInput}
-        onChangeText={inputEmail => setEmail(inputEmail) }
-        inputStyle={styles.inputStyle}
-        inputContainerStyle={styles.inputContainer}
-        errorMessage={ emailMessage === '' ? null : emailMessage }
-        leftIcon={
-          <Icon name={'envelope'} type={'simple-line-icon'} color="#FD8712" size={18} />
-        }
-        
+        <Input style={styles.input} placeholder='Email con el que creaste la cuenta' 
+          ref={_textInput}
+          onChangeText={inputEmail => setEmail(inputEmail) }
+          inputStyle={styles.inputStyle}
+          inputContainerStyle={styles.inputContainer}
+          errorMessage={ emailMessage === '' ? null : emailMessage }
+          leftIcon={
+            <Icon name={'envelope'} type={'simple-line-icon'} color="#FD8712" size={18} />
+          }
         />
 
-        <Input style={styles.input} placeholder='Contraseña' 
-        /* secureTextEntry={true} */
-        ref={_pass1}
-        inputStyle={styles.inputStyle}
-        inputContainerStyle={styles.inputContainer}
-        onChangeText={pass1 => setPass1(pass1) }
-        leftIcon={
-          <Icon name={'lock'} type={'simple-line-icon'} color="#FD8712" size={18} />
-        }
-        errorMessage={ passMessage === '' ? null : passMessage }
-        />
-  
+
         <Button
-            loading={props.isLoggingIn}
-            title="Iniciar sesion"
+            loading={props.checkIn}
+            title="Restablecer contraseña"
             buttonStyle={styles.button}
-            onPress={()=> {loginWithEmail()}} 
+            onPress={()=> {sendResetPassword()}} 
           />
 
         {/* Mensaje de exito */}
         {
-          props.successfulRegistration ? <Text style={styles.message}> {props.message}  </Text>  
+          props.resetPasswordMessage !== '' ? <Text style={styles.message}> {props.resetPasswordMessage}  </Text>  
           : <Text/>
         }
         {/* Mensaje de error */}
-        {
-          props.errorRegistration ? <Text style={styles.errorMessage}> {props.errorMessage}  </Text>  
-          : <Text/>
-        }
+       
 
         <View style={styles.footer} >
           <View style={styles.footerElement}>
-          <TouchableOpacity  onPress={() => props.navigation.navigate('resetPassword')} >
+          <TouchableOpacity  onPress={() => props.navigation.navigate('Login')} >
               <Text  style={styles.footerText}>
-              Olvide mi contraseña 
+              Iniciar sesion
               </Text>          
             </TouchableOpacity>
             <TouchableOpacity  onPress={() => props.navigation.navigate('SignUp')} >
@@ -115,7 +89,7 @@ const Login = (props) => {
           </View>
         </View>
        
-      </ScrollView>
+      </View>
    
   );
 };
@@ -126,20 +100,17 @@ function mapStateToProps(state) {
     checkIn: state.auth.checkIn,
     message: state.auth.message,
     errorMessage: state.auth.errorMessage,
-    isLoggingIn: state.auth.isLoggingIn,
-
+    isLoading: state.auth.isLoading,
+    resetPasswordMessage: state.auth.resetPasswordMessage
   };
 }
 
 const styles = StyleSheet.create({
   container:{
     flex: 1,
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
+    backgroundColor: '#fefefe',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fefefe',
-   
   },
   logo:{
     width: 70, 
@@ -164,7 +135,7 @@ const styles = StyleSheet.create({
   message:{
     marginTop: 20,
     padding: 20 ,
-    color: 'green',
+    color: 'grey',
     textAlign:'justify'
   },
   errorMessage: {
@@ -204,5 +175,5 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect(mapStateToProps)(Login) ;
+export default connect(mapStateToProps)(resetPassword) ;
 

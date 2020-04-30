@@ -1,6 +1,7 @@
 import { myFirebase, firebaseInit } from "../../../configFirebase";
 
 export const IS_LOADING = "IS_LOADING";
+export const UPDATE_MESSAGE = "UPDATE_MESSAGE";
 // SIGN UP
 export const SIGNUP_REQUEST = "SIGNUP_REQUEST";
 export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
@@ -161,20 +162,42 @@ export const loginUser = (email, password) => dispatch => {
     });
 };
 
+export const firebaseResetPassword = (email) =>  dispatch =>{
+  dispatch({
+    type: UPDATE_MESSAGE,
+    message: ''
+  })
+  myFirebase.auth().sendPasswordResetEmail(email).then(()=> {
+    console.log("Email enviado");
+    dispatch({
+      type: UPDATE_MESSAGE,
+      message: 'Te hemos enviado un email,revisa tu bandeja de entrada'
+    })
+  }).catch((err)=> {
+    dispatch({
+      type: UPDATE_MESSAGE,
+      message: 'Este email no aparece en nuestra base de datos'
+    })
 
+    console.log(err);
+  })
+}
 
 export const logoutUser = () => dispatch => {
-  console.log("cerrando sesion");
+  dispatch(isLoading(true));
   dispatch(requestLogout());
   myFirebase
     .auth()
     .signOut()
     .then(() => {
       dispatch(receiveLogout());
+      dispatch(isLoading(false));
     })
     .catch(error => {
       //Do something with the error if you want!
+      console.log(error);
       dispatch(logoutError());
+      dispatch(isLoading(false));
     });
 };
 

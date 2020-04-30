@@ -1,5 +1,6 @@
 import {
   IS_LOADING,
+  UPDATE_MESSAGE,
   SIGNUP_REQUEST,
   SIGNUP_SUCCESS,
   SIGNUP_ERROR,
@@ -21,6 +22,7 @@ export default (
     emailVerified: false,
     successfulRegistration: false,
     errorRegistration: false,
+    resetPasswordMessage: '' ,
     message: '',
     errorMessage: '',
     isLoggingIn: false,
@@ -39,6 +41,11 @@ export default (
       return{
         ...state,
         isLoading: action.payload
+      }
+    case UPDATE_MESSAGE:
+      return{
+        ...state,
+        resetPasswordMessage: action.message,
       }
     case SIGNUP_REQUEST:
       return {

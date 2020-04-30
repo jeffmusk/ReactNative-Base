@@ -4,8 +4,10 @@ import { View, Text , Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Loading from './src/screens/GeneralScreen/Loading';
+
 import SignIn from './src/screens/auth/SignUp';
 import Login  from './src/screens/auth/Login';
+import resetPassword from './src/screens/auth/resetPassword';
 
 import Home  from './src/screens/HomeScreen';
 import {logoutUser} from './src/store/actions';
@@ -35,19 +37,22 @@ function MainScreen(props) {
       </Stack.Navigator>
       :
       !props.isAuthenticated ? 
-        <Stack.Navigator initialRouteName={"Login"} headerMode="none">
+        <Stack.Navigator initialRouteName={"resetPassword"} headerMode="none">
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen  name="SignUp" component={SignIn} options={{
             title: 'Registro'
           }} />
+          <Stack.Screen name="resetPassword" component={resetPassword} options={{
+            title: 'Recuperar contraseña'
+          }} />
+
+
         </Stack.Navigator>
         :
         <Stack.Navigator initialRouteName={"Home"}>
           <Stack.Screen name="Home" component={Home} />
         </Stack.Navigator>   
     }
-      
-      
     </NavigationContainer>
   );
 }

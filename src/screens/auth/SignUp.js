@@ -1,6 +1,6 @@
 import React,{ useEffect, useState } from 'react';
 import { connect } from "react-redux";
-import { View, Text , StyleSheet , TouchableOpacity} from 'react-native';
+import { View, Text , StyleSheet , TouchableOpacity,ScrollView} from 'react-native';
 
 import {  Input , Icon, Button,Image } from 'react-native-elements';
 
@@ -8,69 +8,6 @@ import {signup , clearErrorMessage} from '../../store/actions'
 import logo from '../../../assets/minilogo.png'
 console.ignoredYellowBox = ['Setting a timer'];
 
-const styles = StyleSheet.create({
-  container:{
-    flex: 1,
-    backgroundColor: '#fefefe',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logo:{
-    width: 70, 
-    height: 70,
-    marginBottom:20, 
-  },
-  inputs:{
-   backgroundColor: '#fff',
-   justifyContent: 'space-around',
-  },
-  input: {
-    paddingLeft: 8,
-    marginTop: 10
-  },
-  button:{
-    marginTop: 10,
-    backgroundColor: '#FD8712',
-    borderRadius: 40,
-    paddingLeft: 80,
-    paddingRight: 80
-  },
-  message:{
-    marginTop: 20,
-    padding: 20 ,
-    color: 'green',
-    textAlign:'justify'
-  },
-  errorMessage: {
-    marginTop: 20,
-    padding: 20 ,
-    fontWeight: 'bold',
-    color: 'red',
-    textAlign:'justify'
-  },
-  inputContainer: {
-    paddingLeft: 8,
-    borderRadius: 40,
-    borderWidth: 1,
-    backgroundColor: '#fff',
-    borderColor: '#FD8712',
-    height: 45,
-    marginVertical: 10,
-  },
-  inputStyle: {
-    flex: 1,
-    marginLeft: 10,
-    color: 'grey',
-    fontSize: 16,
-  },
-  footer:{
-    position: 'absolute',
-    bottom: 15,
-  },
-  footerText:{
-    color: 'grey',
-  }
-})
 
 const SignIn = (props) => {
   
@@ -87,7 +24,6 @@ const SignIn = (props) => {
 
   const {dispatch} = props
 
-  
 
   const signInWithEmail = () => {
     setPassMessage('')
@@ -123,7 +59,8 @@ const SignIn = (props) => {
   }
 
   return (
-    <View style={styles.container}  >
+    <ScrollView  keyboardShouldPersistTaps="handled"
+    contentContainerStyle={styles.container} >
 
         <Image
           style={styles.logo}
@@ -195,7 +132,7 @@ const SignIn = (props) => {
           </Text>          
         </TouchableOpacity>
 
-      </View>
+      </ScrollView>
    
   );
 };
@@ -210,6 +147,71 @@ function mapStateToProps(state) {
     successfulRegistration : state.auth.successfulRegistration
   };
 }
+
+const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: '#fefefe',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logo:{
+    width: 70, 
+    height: 70,
+    marginBottom:20, 
+  },
+  inputs:{
+   backgroundColor: '#fff',
+   justifyContent: 'space-around',
+  },
+  input: {
+    paddingLeft: 8,
+    marginTop: 10
+  },
+  button:{
+    marginTop: 10,
+    backgroundColor: '#FD8712',
+    borderRadius: 40,
+    paddingLeft: 80,
+    paddingRight: 80
+  },
+  message:{
+    marginTop: 20,
+    padding: 20 ,
+    color: 'green',
+    textAlign:'justify'
+  },
+  errorMessage: {
+    marginTop: 20,
+    padding: 20 ,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign:'justify'
+  },
+  inputContainer: {
+    paddingLeft: 8,
+    borderRadius: 40,
+    borderWidth: 1,
+    backgroundColor: '#fff',
+    borderColor: '#FD8712',
+    height: 45,
+    marginVertical: 10,
+  },
+  inputStyle: {
+    flex: 1,
+    marginLeft: 10,
+    color: 'grey',
+    fontSize: 16,
+  },
+  footer:{
+    position: 'absolute',
+    bottom: 15,
+  },
+  footerText:{
+    color: 'grey',
+  }
+})
+
 
 export default connect(mapStateToProps)(SignIn) ;
 
