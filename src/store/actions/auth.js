@@ -197,6 +197,7 @@ export const firebaseResetPassword = (email) =>  dispatch =>{
 }
 
 export const logoutUser = () => dispatch => {
+  dispatch(loginError(''))
   dispatch(isLoading(true));
   dispatch(requestLogout());
   myFirebase
